@@ -9,6 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Textarea } from "./ui/textarea";
 import ReactDatePicker from "react-datepicker";
 import { Sevillana } from "next/font/google";
+import { Input } from "./ui/input";
 const MeetingTypeList = () => {
   const { toast } = useToast();
   const router = useRouter();
@@ -48,7 +49,7 @@ const MeetingTypeList = () => {
         },
       });
       setCallDetails(call);
-      
+
       console.log(callDetails);
 
       if (!values.description) {
@@ -64,7 +65,7 @@ const MeetingTypeList = () => {
       console.log(error);
     }
   };
-  const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callDetails?.id}`
+  const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callDetails?.id}`;
   return (
     <section className=" grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
       <HomeCard
@@ -149,8 +150,8 @@ const MeetingTypeList = () => {
           }}
           title="Meeting Created"
           handleClick={() => {
-            navigator.clipboard.writeText(meetingLink)
-            toast({title:'Link copied'})
+            navigator.clipboard.writeText(meetingLink);
+            toast({ title: "Link copied" });
           }}
           image="/icons/checked.svg"
           buttonIcon="/icons/copy.svg"
@@ -158,6 +159,32 @@ const MeetingTypeList = () => {
           className="text-center"
         />
       )}
+      <MeetingModal
+        isOpen={meetingState === "isInstantMeeting"}
+        onClose={() => {
+          setMeetingState(undefined);
+        }}
+        title="Start an Instant Meeting"
+        handleClick={createMeeting}
+        buttonText="Start Meeting"
+        className="text-center"
+      />
+      <MeetingModal
+        isOpen={meetingState === "isJoiningMeeting"}
+        onClose={() => {
+          router.push(values.link);
+        }}
+        title="Type the link here"
+        handleClick={createMeeting}
+        buttonText="Join Meeting"
+        className="text-center"
+      >
+        <Input
+          placeholder="Meeting link"
+          className="border-none bg-dark-3 focus-visible:ring-0 focus-visible:ring-offset-0"
+          onChange={(e) => setValues({ ...values, link: e.target.value })}
+        />
+      </MeetingModal>
     </section>
   );
 };
