@@ -48,7 +48,7 @@ const MeetingTypeList = () => {
         },
       });
       setCallDetails(call);
-
+      
       console.log(callDetails);
 
       if (!values.description) {

@@ -19,12 +19,14 @@ export const useGetCalls = () => {
             starts_at: { $exists: true },
             $or: [
               { created_by_user_id: user.id },
-              { menubar: { $in: [user.id] } },
+              { members: { $in: [user.id] } },
             ],
           },
         });
         setCalls(calls);
       } catch (error) {
+        // console.log(error);
+
         console.error(error);
       } finally {
         setIsLoading(false);
@@ -35,13 +37,23 @@ export const useGetCalls = () => {
   }, [client, user?.id]);
 
   const now = new Date();
-  const endedCalls = calls.filter(({ state: { startsAt, endedAt } }: Call) => {
-    return (startsAt && new Date(startsAt) < now) || !!endedAt;
+  console.log(calls[0]);
+
+  const endedCalls = calls.filter(({ state: {  endedAt } }: Call) => {
+    return !!endedAt;
   });
 
-  const upcomingCalls = calls.filter(({ state: { startsAt } }: Call) => {
-    return startsAt && new Date(startsAt) > now;
-  });
+  const upcomingCalls = calls.filter(
+    ({ state: { endedAt } }: Call) => {
+      return !endedAt;
+    }
+  );
+
+  if (upcomingCalls.length > 0) {
+    console.log("ok");
+  } else {
+    console.log("no");
+  }
   return {
     endedCalls,
     upcomingCalls,
